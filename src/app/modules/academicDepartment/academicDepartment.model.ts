@@ -1,5 +1,7 @@
 import { Schema, model } from 'mongoose';
 import { TAcademicDepartment } from './academicDepartment.interface';
+import httpStatus from 'http-status';
+import AppError from '../../errors/AppError';
 
 const academicDepartmentSchema = new Schema<TAcademicDepartment>(
   {
@@ -10,7 +12,7 @@ const academicDepartmentSchema = new Schema<TAcademicDepartment>(
     },
     academicFaculty: {
       type: Schema.Types.ObjectId,
-      ref: 'AcademicFaculty',
+      ref: 'academicFaculty',
     },
   },
   {
@@ -33,12 +35,12 @@ academicDepartmentSchema.pre('findOneAndUpdate', async function (next) {
 
   const isUserExists = await AcademicDepartment.findOne(query);
   if (isUserExists) {
-    throw new Error("This user doesn't exists");
+    throw new AppError(httpStatus.NOT_FOUND, "This department is already exists");
   }
   next();
 });
 
 export const AcademicDepartment = model<TAcademicDepartment>(
-  'AcademicDepartment',
+  'academicDepartment',
   academicDepartmentSchema,
 );
